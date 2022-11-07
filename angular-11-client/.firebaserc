@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "terpgymbuddy": {
+      "hosting": {
+        "Angular11Crud": [
+          "terpgymbuddy"
+        ]
+      }
+    }
+  }
+}
