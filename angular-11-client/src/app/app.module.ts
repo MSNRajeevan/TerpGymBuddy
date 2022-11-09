@@ -52,9 +52,10 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
     MatInputModule,
     MatFormFieldModule,
     MatCardModule,
-    AngularFireAuthModule,
+    AngularFireAuthModule
   ],
-  providers: [],
+  providers: [
+],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -13,21 +13,26 @@ import { filter, switchMap } from 'rxjs/operators';
 import { User } from '../models/User.model';
 // import { filter, switchMap } from 'rxjs/operators';
 // import { User } from '../models/User.model';
+
 declare var gapi: any;
 
 @Injectable({ providedIn: 'root' })
+
 export class AuthService {
   [x: string]: any;
   user$: Observable<User | null | undefined>;
   calendarItems: any[] | undefined;
+  userLoggedin = false;
 
   constructor(
     private afAuth: AngularFireAuth,
     private afs: AngularFirestore,
     private router: Router
   ) {
-    this.initClient();
+    // this.googleSignin();
     // Get the auth state, then fetch the Firestore user document or return null
+    console.log("the value of gapi in the begining is", gapi);
+    this.initClient();
     this.user$ = afAuth.authState.pipe(
       switchMap((user) => {
         // Logged in
@@ -50,6 +55,8 @@ export class AuthService {
   private updateUserData(user: firebase.User | null) {
     // Sets user data to firestore on login
     if (user) {
+      this.userLoggedin = true;
+      console.log("Test is user logged in changes to true", this.userLoggedin);
       const userRef: AngularFirestoreDocument<User> = this.afs.doc(
         `users/${user.uid}`
       );
@@ -70,34 +77,47 @@ export class AuthService {
 
   async signOut() {
     await this.afAuth.signOut();
+    this.userLoggedin = false;
     this.router.navigate(['/']);
   }
 
   // Initialize the Google API client with desired scopes
   initClient() {
-    if (this.user$) {
-      gapi.load('client', () => {
-        console.log('loaded client');
+
+    gapi.load('client', () => {
+      console.log('loaded client')
+
+      // It's OK to expose these credentials, they are client safe.
+      gapi.client.init({
+        apiKey: 'AIzaSyBcv8l0Bndb-PqvMAEHEJ8z7faTMn2g48c',
+        clientId: '762869821827-nsrksl20e8dhb0ltuci5i6b6licd26ef.apps.googleusercontent.com',
+        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
+        scope: 'https://www.googleapis.com/auth/calendar'
+      })
+
+      gapi.client.load('calendar', 'v3', () => console.log('loaded calendar',gapi.client));
+      // gapi.load('client', () => {
+      //   console.log('loaded client');
 
         // It's OK to expose these credentials, they are client safe.
-        gapi.client.init({
-          apiKey: 'YOUR_FIREBASE_API_KEY',
-          clientId: 'YOUR_OAUTH2_CLIENTID',
-          discoveryDocs: [
-            'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
-          ],
-          scope: 'https://www.googleapis.com/auth/calendar',
-        });
+        // gapi.client.init({
+        //   apiKey: 'AIzaSyBcv8l0Bndb-PqvMAEHEJ8z7faTMn2g48c',
+        //   clientId: '762869821827-nsrksl20e8dhb0ltuci5i6b6licd26ef.apps.googleusercontent.com',
+        //   discoveryDocs: [
+        //     'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
+        //   ],
+        //   scope: 'https://www.googleapis.com/auth/calendar',
+        // });
 
-        gapi.client.load('calendar', 'v3', () =>
-          console.log('loaded calendar')
-        );
+        // gapi.client.load('calendar', 'v3', () =>
+        //   console.log('loaded calendar',gapi.client)
+        // );
       });
-    }
 
   } //Calnder Services here - this is used to get the next 10 calender events.
 
   async getCalendar() {
+    console.log("await gapi",await gapi);
     const events = await gapi.client.calendar.events.list({
       calendarId: 'primary',
       timeMin: new Date().toISOString(),
