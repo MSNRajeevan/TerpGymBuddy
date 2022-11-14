@@ -1,0 +1,83 @@
+<div *ngIf="auth.user$ | async as user">
+  <h3>Howdy, {{ user.displayName }}</h3>
+  <img [src]="user.photoURL" />
+  <button
+    mat-flat-button
+    color="primary"
+    class="logoutbutton"
+    (click)="auth.signOut()"
+  >
+    Logout
+  </button>
+  <br />
+
+  <mat-card *ngIf="exercises" class="BMI-card">
+    <mat-card-header>
+      <div mat-card-avatar class="gym-header-image"></div>
+      <mat-card-title>Suggested Exercises:</mat-card-title>
+      <mat-card-subtitle>Based on your Motive</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      Best Exercise for you is {{ exercises.list_of_exercises }}
+    </mat-card-content>
+    <mat-card-content>
+      {{ exercises.exercise_description }}
+    </mat-card-content>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Select Date:</mat-label>
+      <input
+        matInput
+        [matDatepicker]="picker2"
+        [formControl]="serializedDate"
+      />
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+      <mat-datepicker #picker2></mat-datepicker>
+    </mat-form-field>
+
+    <br />
+    <div *ngIf="auth.calendarItems">
+      <button mat-flat-button color="primary" (click)="getCalenderEvents()">
+        Best Available Schedule
+      </button>
+    </div>
+    <div *ngIf="!auth.calendarItems && gotCalenderEvents">
+      <p>
+        Looks Like your Day is free. Please feel Free to hit the Gym whenever
+        possible.
+      </p>
+    </div>
+  </mat-card>
+  <br />
+  <div *ngIf="toadysUserEvents && gotCalenderEvents">
+    <p>
+      The Gyms are open from <b>6 AM to 10 PM.</b> Please use the following
+      schedule of yours and hit the Gym accordingly!!
+    </p>
+    <br /><br />
+    <div class="container" *ngIf="serializedDate.value">
+      <div class="row">
+        Your Schedule for today! <br /><br />
+        <div *ngFor="let item of toadysUserEvents" class="col-md">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Event: {{ item.summary }}</mat-card-title>
+              <mat-card-subtitle>Status : {{ item.status }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              Start Time: {{ item.start.dateTime | date: "medium" }}
+            </mat-card-content>
+            <mat-card-content>
+              End Time: {{ item.end.dateTime | date: "medium" }}
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!auth.user$">
+    <button mat-flat-button color="primary" routerLink="/login">Login</button>
+  </div>
+</div>

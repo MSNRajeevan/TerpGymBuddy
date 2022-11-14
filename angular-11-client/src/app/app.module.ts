@@ -24,6 +24,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { AngularFireAuthModule } from '@angular/fire/auth';
+import { ExerciseComponent } from './components/exercise/exercise.component';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -34,7 +38,8 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
     ProfileComponent,
     LoginComponent,
     SignupComponent,
-    DashboardComponent
+    DashboardComponent,
+    ExerciseComponent
   ],
   imports: [
     BrowserModule,
@@ -52,9 +57,11 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
     MatInputModule,
     MatFormFieldModule,
     MatCardModule,
-    AngularFireAuthModule
+    AngularFireAuthModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
-  providers: [
+  providers: [DatePipe
 ],
   bootstrap: [AppComponent]
 })

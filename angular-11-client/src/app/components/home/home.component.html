@@ -1,10 +1,8 @@
-<!-- Add a logo or some gym design -->
 <div *ngIf="!(afAuth.user | async)"> 
-<button mat-raised-button color = "primary" routerLink="/login">Login</button>
+<button mat-flat-button color = "primary" routerLink="/login">Login</button>
 </div>
 
 <div *ngIf="(afAuth.user | async)"> 
-    <button mat-raised-button color = "primary" routerLink="/dashboard">Dashboard</button>
-    <button mat-raised-button color = "primary" (click)= "logout()">Logout</button>
+    <button mat-flat-button color = "primary" routerLink="/dashboard">Dashboard</button>
+    <button mat-flat-button color = "primary" class="logoutbutton" (click)= "logout()">Logout</button>
 </div>
-<!-- <div *ngIf="!(afAuth.user | async)"> User is not Logged in </div> -->
