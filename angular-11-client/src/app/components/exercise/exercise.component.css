@@ -1,0 +1,7 @@
+.gym-header-image {
+    background-image: url("/assets/gymImg.png");
+    background-size: cover;
+  }
+.mat-form-field {
+    margin-right: 12px;
+  }

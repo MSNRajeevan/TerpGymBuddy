@@ -19,12 +19,10 @@
 <div *ngIf="auth.user$ | async as user">
     <h3>Howdy, {{ user.displayName }}</h3>
     <img  [src]="user.photoURL">
-    <p>UID: {{ user.uid }}</p>
-    <button (click)="auth.signOut()">Logout</button>
+    <button mat-flat-button color="primary" class="logoutbutton" (click)="auth.signOut()">Logout</button>
 </div>
 
-<button (click)="auth.getCalendar()">Get Google Calendar</button>
-<button (click)="auth.insertEvent()">Add Event</button>
+<button mat-flat-button color = "primary" routerLink="/dashboard">Dashboard</button>
 
 <div *ngFor="let item of auth.calendarItems">
     <h3>{{ item.summary }} - {{ item.status }}</h3>
@@ -32,20 +30,3 @@
     <p>{{ item.description }}</p>
 </div>
 </ng-template>
-
-<!-- <div *ngIf="auth.user$ | async as user">
-    <h3>Logged in as {{ user.displayName }}</h3>
-    <img src="{{ user.photoURL }}" width="50px">
-    <button (click)="auth.logout()">Logout</button>
-
-    <button (click)="auth.getCalendar()">Get Google Calendar</button>
-    <button (click)="auth.insertEvent()">Add Event</button>
-
-    <div *ngFor="let item of auth.calendarItems">
-        <h3>{{ item.summary }} - {{ item.status }}</h3>
-        <p><em>Created {{ item.created }}</em></p>
-        <p>{{ item.description }}</p>
-    </div>
-</div>
-
-<button (click)="auth.login()">Login with Google</button> -->
