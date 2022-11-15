@@ -24,9 +24,4 @@
 
 <button mat-flat-button color = "primary" routerLink="/dashboard">Dashboard</button>
 
-<div *ngFor="let item of auth.calendarItems">
-    <h3>{{ item.summary }} - {{ item.status }}</h3>
-    <p><em>Created {{ item.created }}</em></p>
-    <p>{{ item.description }}</p>
-</div>
 </ng-template>
