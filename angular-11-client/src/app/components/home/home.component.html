@@ -1,9 +1,8 @@
-<button mat-raised-button color = "primary" routerLink="/login">Login</button>
-<button mat-raised-button color = "primary" routerLink="/signup">Signup</button>
-<button mat-raised-button color = "primary" routerLink="/dashboard">Dashboard</button>
-
-<div *ngIf="(afAuth.user | async)"> User is Logged in 
-    <br>
-    <button mat-raised-button color = "primary" (click)= "logout()">Logout</button>
+<div *ngIf="!(afAuth.user | async)"> 
+<button mat-flat-button color = "primary" routerLink="/login">Login</button>
 </div>
-<div *ngIf="!(afAuth.user | async)"> User is not Logged in </div>
+
+<div *ngIf="(afAuth.user | async)"> 
+    <button mat-flat-button color = "primary" routerLink="/dashboard">Dashboard</button>
+    <button mat-flat-button color = "primary" class="logoutbutton" (click)= "logout()">Logout</button>
+</div>

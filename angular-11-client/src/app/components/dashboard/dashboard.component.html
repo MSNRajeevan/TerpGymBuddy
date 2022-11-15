@@ -1,1 +1,120 @@
-<p>dashboard works!</p>
+<div *ngIf="auth.user$ | async as user">
+  <h3>Howdy, {{ user.displayName }}</h3>
+  <img [src]="user.photoURL" />
+  <button
+    mat-flat-button
+    color="primary"
+    class="logoutbutton"
+    (click)="auth.signOut()"
+  >
+    Logout
+  </button>
+  <br />
+  <form [formGroup]="userdetails">
+    <div class="form-group">
+      <mat-form-field appearance="legacy">
+        <mat-label>Please Enter your Height in inches</mat-label>
+        <input
+          class="form-control"
+          formControlName="height"
+          type="text"
+          matInput
+          placeholder="Height"
+        />
+        <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
+        <mat-hint>inches</mat-hint>
+        <div
+          *ngIf="
+            userdetails.controls['height'].invalid &&
+            (userdetails.controls['height'].dirty ||
+              userdetails.controls['height'].touched)
+          "
+          class="alert alert-danger"
+        >
+          <div *ngIf="userdetails.controls['height'].errors">
+            Height is required.
+          </div>
+        </div>
+      </mat-form-field>
+    </div>
+    <br />
+    <div class="form-group">
+      <mat-form-field appearance="legacy">
+        <mat-label>Please Enter your Weight in lbs</mat-label>
+        <input
+          class="form-control"
+          formControlName="weight"
+          type="text"
+          matInput
+          placeholder="weight"
+        />
+        <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
+        <mat-hint>lbs</mat-hint>
+        <div
+          *ngIf="
+            userdetails.controls['weight'].invalid &&
+            (userdetails.controls['weight'].dirty ||
+              userdetails.controls['weight'].touched)
+          "
+          class="alert alert-danger"
+        >
+          <div *ngIf="userdetails.controls['weight'].errors">
+            Weight is required.
+          </div>
+        </div>
+      </mat-form-field>
+    </div>
+    <br />
+    <button
+      [disabled]="userdetails.pristine || userdetails.invalid"
+      (click)="calculateBMI()"
+      mat-flat-button
+      color="primary"
+    >
+      Calculate BMI
+    </button>
+  </form>
+  <br />
+  <div *ngIf="bmicalculated && goals">
+    <mat-card class="BMI-card">
+      <mat-card-header>
+        <div mat-card-avatar class="bmi-header-image"></div>
+        <mat-card-title>BMI</mat-card-title>
+        <mat-card-subtitle>calculated BMI</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content> Your BMI is {{ bmi }} </mat-card-content>
+      <mat-card-content>
+        {{ suggestion }}
+      </mat-card-content>
+      <form
+        *ngIf="goals"
+        [formGroup]="registrationForm"
+        (ngSubmit)="onSubmit()"
+      >
+        <div class="d-grid">
+          <select
+            class="custom-select mb-3"
+            (change)="changeMotive($event)"
+            formControlName="motive"
+          >
+            <option value="" disabled>Please add motive</option>
+            <option *ngFor="let goal of goals" [ngValue]="goal.goalId">
+              {{ goal.goalDescription }}
+            </option>
+          </select>
+          <!-- error block -->
+          <div class="invalid-feedback" *ngIf="isSubmitted && motive?.invalid">
+            <sup>*</sup>Please provide goal description
+          </div>
+          <button type="submit" class="btn btn-danger btn-lg btn-block">
+            Submit
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  </div>
+</div>
+
+<div *ngIf="!auth.user$">
+  <button mat-flat-button color="primary" routerLink="/login">Login</button>
+</div>

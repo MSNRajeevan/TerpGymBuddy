@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import * as $ from "jquery";
 
 import firebase, { auth } from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
@@ -11,10 +12,10 @@ import {
 import { Observable, of } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { User } from '../models/User.model';
-// import { filter, switchMap } from 'rxjs/operators';
-// import { User } from '../models/User.model';
 
 declare var gapi: any;
+var GoogleAuth: { isSignedIn: { listen: (arg0: void) => void; }; currentUser: { get: () => any; }; };
+var SCOPE = 'https://www.googleapis.com/auth/calendar';
 
 @Injectable({ providedIn: 'root' })
 
@@ -23,20 +24,19 @@ export class AuthService {
   user$: Observable<User | null | undefined>;
   calendarItems: any[] | undefined;
   userLoggedin = false;
+  emailLoggedinUser: any;
 
   constructor(
     private afAuth: AngularFireAuth,
     private afs: AngularFirestore,
     private router: Router
   ) {
-    // this.googleSignin();
-    // Get the auth state, then fetch the Firestore user document or return null
-    console.log("the value of gapi in the begining is", gapi);
     this.initClient();
     this.user$ = afAuth.authState.pipe(
       switchMap((user) => {
         // Logged in
         if (user) {
+          this.emailLoggedinUser = user.email;
           return this.afs.doc<User>(`users/${user.uid}`).valueChanges();
         } else {
           // Logged out
@@ -56,7 +56,6 @@ export class AuthService {
     // Sets user data to firestore on login
     if (user) {
       this.userLoggedin = true;
-      console.log("Test is user logged in changes to true", this.userLoggedin);
       const userRef: AngularFirestoreDocument<User> = this.afs.doc(
         `users/${user.uid}`
       );
@@ -71,7 +70,6 @@ export class AuthService {
         merge: true,
       });
     } else {
-      console.log('No user is logged in or some issue with authentication');
     }
   }
 
@@ -84,42 +82,31 @@ export class AuthService {
   // Initialize the Google API client with desired scopes
   initClient() {
 
-    gapi.load('client', () => {
+    gapi.load('client:auth2', () => {
       console.log('loaded client')
 
       // It's OK to expose these credentials, they are client safe.
       gapi.client.init({
-        apiKey: 'AIzaSyBcv8l0Bndb-PqvMAEHEJ8z7faTMn2g48c',
+        apiKey: 'AIzaSyBCLIVNhJsE5-ql5hDsDMdhBLqwmxiJufQ',
         clientId: '762869821827-nsrksl20e8dhb0ltuci5i6b6licd26ef.apps.googleusercontent.com',
         discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
         scope: 'https://www.googleapis.com/auth/calendar'
-      })
+      }).then(function () {
+        GoogleAuth = gapi.auth2.getAuthInstance();
+  
+        // Listen for sign-in state changes.
+        GoogleAuth.isSignedIn.listen(updateSigninStatus());
+    });
 
       gapi.client.load('calendar', 'v3', () => console.log('loaded calendar',gapi.client));
-      // gapi.load('client', () => {
-      //   console.log('loaded client');
-
-        // It's OK to expose these credentials, they are client safe.
-        // gapi.client.init({
-        //   apiKey: 'AIzaSyBcv8l0Bndb-PqvMAEHEJ8z7faTMn2g48c',
-        //   clientId: '762869821827-nsrksl20e8dhb0ltuci5i6b6licd26ef.apps.googleusercontent.com',
-        //   discoveryDocs: [
-        //     'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
-        //   ],
-        //   scope: 'https://www.googleapis.com/auth/calendar',
-        // });
-
-        // gapi.client.load('calendar', 'v3', () =>
-        //   console.log('loaded calendar',gapi.client)
-        // );
       });
 
   } //Calnder Services here - this is used to get the next 10 calender events.
 
+
   async getCalendar() {
-    console.log("await gapi",await gapi);
     const events = await gapi.client.calendar.events.list({
-      calendarId: 'primary',
+      calendarId: this.emailLoggedinUser,
       timeMin: new Date().toISOString(),
       showDeleted: false,
       singleEvents: true,
@@ -127,7 +114,6 @@ export class AuthService {
       orderBy: 'startTime',
     });
 
-    console.log(events);
 
     this.calendarItems = events.result.items;
   } //adding to the calender
@@ -151,3 +137,24 @@ export class AuthService {
   hoursFromNow = (n: number) =>
     new Date(Date.now() + n * 1000 * 60 * 60).toISOString();
 }
+function updateSigninStatus() {
+  setSigninStatus();
+}
+
+function setSigninStatus() {
+  var user = GoogleAuth.currentUser.get();
+  var isAuthorized = user.hasGrantedScopes(SCOPE);
+  if (isAuthorized) {
+    $('#sign-in-or-out-button').html('Sign out');
+    $('#revoke-access-button').css('display', 'inline-block');
+    $('#auth-status').html('You are currently signed in and have granted ' +
+        'access to this app.');
+  } else {
+    $('#sign-in-or-out-button').html('Sign In/Authorize');
+    $('#revoke-access-button').css('display', 'none');
+    $('#auth-status').html('You have not authorized this app or you are ' +
+        'signed out.');
+  }
+}
+
+
