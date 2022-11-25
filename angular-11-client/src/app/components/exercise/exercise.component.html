@@ -38,7 +38,7 @@
 
     <br />
     <div *ngIf="auth.calendarItems">
-      <button mat-flat-button color="primary" (click)="getCalenderEvents()">
+      <button mat-flat-button color="primary" class="rightButton" (click)="getCalenderEvents()">
         Show My Schedule
       </button>
     </div>
@@ -50,31 +50,41 @@
     </div>
   </mat-card>
   <br />
-  <div *ngIf="toadysUserEvents && gotCalenderEvents">
+  <div *ngIf="gotCalenderEvents">
     <p>
       The Gyms are open from <b>6 AM to 10 PM.</b> Please use the following
       schedule of yours and hit the Gym accordingly!!
-    </p>
-    <br /><br />
-    <div class="container" *ngIf="serializedDate.value">
-      <div class="row">
-        Your Schedule for today! <br /><br />
-        <div *ngFor="let item of toadysUserEvents" class="col-md">
-          <mat-card>
-            <mat-card-header>
-              <mat-card-title>Event: {{ item.summary }}</mat-card-title>
-              <mat-card-subtitle>Status : {{ item.status }}</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              Start Time: {{ item.start.dateTime | date: "medium" }}
-            </mat-card-content>
-            <mat-card-content>
-              End Time: {{ item.end.dateTime | date: "medium" }}
-            </mat-card-content>
-          </mat-card>
-        </div>
-      </div>
+    </p><br>
+    <div *ngIf="schedules">
+      <select
+      class="custom-select mb-3"
+      (change)="selectTimeOfTheDat($event)"
+    >
+      <option value="" disabled selected>What Fancies you?</option>
+      <option value ="AM">
+        AM Person
+      </option>
+      <option value ="PM">
+        PM Person
+      </option>
+    </select>
     </div>
+
+    <div *ngIf="remainingSchedules && showSlots">
+      <select
+      class="custom-select mb-3"
+      (change)="changeSlot($event)"
+    >
+      <option value="" disabled selected>Please select Slot</option>
+      <option *ngFor="let item of remainingSchedules" [value] ="item.schedule_id">
+        {{ item.timing }}
+      </option>
+    </select>
+    </div>
+    <button *ngIf = "showSlots && showAppointmentButton" mat-flat-button color="primary" (click)="bookAppointment()">
+      Book Appointment
+    </button>
+
   </div>
 
   <div *ngIf="!auth.user$">

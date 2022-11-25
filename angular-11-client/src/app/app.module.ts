@@ -14,9 +14,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { ProfileComponent } from './components/profile/profile.component';
 import { LoginComponent } from './components/login/login.component';
-import { SignupComponent } from './components/signup/signup.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { AngularFireModule } from '@angular/fire';
 import { environment } from 'src/environments/environment';
@@ -35,11 +33,9 @@ import { DatePipe } from '@angular/common';
     FooterComponent,
     HeaderComponent,
     HomeComponent,
-    ProfileComponent,
     LoginComponent,
-    SignupComponent,
     DashboardComponent,
-    ExerciseComponent
+    ExerciseComponent,
   ],
   imports: [
     BrowserModule,
