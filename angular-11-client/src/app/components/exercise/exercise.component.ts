@@ -57,6 +57,7 @@ export class ExerciseComponent implements OnInit {
   getCalenderEvents() {
     this.obtainedEvents = this.auth.calendarItems;
     this.gotCalenderEvents = true;
+    console.log("The value of user Schedule for the day:", this.obtainedEvents);
   }
 
   selectTimeOfTheDat(e: any) {
